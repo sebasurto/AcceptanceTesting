@@ -1,16 +1,27 @@
-# Steps para la característica: Add a task to the to-do list (1)
-
 from behave import given, when, then
 
+EXAMPLE_TASKS = [
+    {'name': 'Task 1', 'description': 'Description for 1', 'status': 'Incomplete'},
+    {'name': 'Task 2', 'description': 'Description for 2', 'status': 'Incomplete'}
+]
+
+# Step: Given the to-do list contains tasks
+@given('the to-do list contains tasks')
+def step_to_do_list_contains_tasks(context):
+    context.to_do_list = EXAMPLE_TASKS  # Definir las tareas iniciales en el contexto
+
+# Step 1: Given the to-do list is empty
 @given('the to-do list is empty')
 def step_given_empty_todo_list(context):
     context.to_do_list = []
 
+# Step 2: When I add a task with name "<name>" and description "<description>"
 @when('I add a task with name "{name}" and description "{description}"')
 def step_add_task(context, name, description):
     task = {'name': name, 'description': description, 'status': 'Incomplete'}
     context.to_do_list.append(task)
 
+# Step 3: Then the task "<name>" should be in the to-do list
 @then('the task "{name}" should be in the to-do list')
 def step_task_in_todo_list(context, name):
     task_names = [task['name'] for task in context.to_do_list]
@@ -19,17 +30,17 @@ def step_task_in_todo_list(context, name):
 
 # Steps para la característica: List all tasks in the to-do list (2)
 
-@given(u'the to-do list contains tasks')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Given the to-do list contains tasks')
-
 @when('I list all tasks')
 def step_list_all_tasks(context):
     pass  # No action needed, as this is just a verification step
 
-@then(u'I should see the following tasks')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see the following tasks')
+@then('I should see the following tasks')
+def step_verify_tasks(context):
+    expected_tasks = context.table
+    task_names = [task['name'] for task in context.to_do_list]
+    
+    for row in expected_tasks:
+        assert row['name'] in task_names
 
 
 # Steps para la característica: Mark a task as completed (3)
